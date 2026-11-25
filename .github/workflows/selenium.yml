@@ -1,0 +1,56 @@
+name: CONQUEST Entregável 6 - Testes Selenium (Chrome)
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  selenium:
+    name: Testes E2E no navegador real
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: browser-actions/setup-chrome@v2
+        id: setup_chrome
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - run: python -m pip install --disable-pip-version-check -r e2e/requirements.txt
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - name: Verificar que a documentação da entrega está no build
+        run: |
+          test -f dist/ambientes/index.html
+          grep -q 'Os seis ambientes da atividade' dist/ambientes/index.html
+      - name: Iniciar aplicação Vite de testes
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 5173 > /tmp/conquest-vite-e6.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173/ambientes/index.html | grep -q "Os seis ambientes da atividade"; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/conquest-vite-e6.log
+          exit 1
+      - name: Selenium - portal, login React, teclado e backend REST
+        env:
+          CONQUEST_TEST_BASE: http://127.0.0.1:5173
+          CONQUEST_CHROME_BINARY: ${{ steps.setup_chrome.outputs.chrome-path }}
+          CONQUEST_CHROMEDRIVER_BINARY: ${{ steps.setup_chrome.outputs.chromedriver-path }}
+        run: python -m unittest discover -s e2e/tests -p 'test_*.py' -v
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: entregavel6-evidencias-selenium
+          path: e2e/evidencias/*.png
+          if-no-files-found: ignore
+          retention-days: 14

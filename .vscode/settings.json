@@ -1,0 +1,14 @@
+{
+  "files.eol": "\n",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "javascript.suggest.autoImports": true
+}
