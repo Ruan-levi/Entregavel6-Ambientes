@@ -107,6 +107,13 @@ O GitHub Actions pode usar as variáveis de repositório `NHOST_SUBDOMAIN` e `NH
 
 O código de `functions/duel.js` é mantido nesta entrega para estudo, mas ter dois repositórios consumindo o Nhost **não significa que a Function seja implantada automaticamente pelos dois repositórios**. A implantação dessa Function deve ser confirmada no projeto conectado ao painel Nhost. Consulte [configuração Nhost](docs/NHOST.md) e [duelos online](docs/NHOST_DUELOS.md).
 
+
+### Primeira ativação do GitHub Pages
+
+No primeiro deploy, o GitHub exige que **um administrador do repositório** habilite o Pages: abra [Settings → Pages](https://github.com/Ruan-levi/Entregavel6-Ambientes/settings/pages), escolha **Build and deployment → Source → GitHub Actions** e salve. A integração usada para criar o código não possui permissão de administração para executar essa etapa pela API.
+
+Em seguida, abra [GitHub Actions](https://github.com/Ruan-levi/Entregavel6-Ambientes/actions), selecione o workflow **CONQUEST Entregável 6 - Nhost e GitHub Pages** e use **Re-run failed jobs** na última execução, ou faça uma nova alteração na branch principal. O pipeline compila, publica e verifica a URL automaticamente. **Não considere o site publicado enquanto a verificação pública não estiver verde.**
+
 ## Histórico e separação entre entregas
 
 - **[Entregável 5](https://github.com/Ruan-levi/Entregavel5-Ambientes)**: jogo original da quinta etapa, com [GitHub Pages independente](https://ruan-levi.github.io/Entregavel5-Ambientes/).

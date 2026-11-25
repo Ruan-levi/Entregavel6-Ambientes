@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,9 +47,8 @@ jobs:
           VITE_NHOST_SUBDOMAIN: ${{ env.NHOST_SUBDOMAIN }}
           VITE_NHOST_REGION: ${{ env.NHOST_REGION }}
       - run: node scripts/check-nhost-build.mjs
+      # A primeira ativação do Pages requer Settings > Pages > Source: GitHub Actions.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
