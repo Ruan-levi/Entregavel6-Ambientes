@@ -1,0 +1,99 @@
+name: CONQUEST Entregável 6 - Nhost e GitHub Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: entregavel6-pages-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  NHOST_SUBDOMAIN: ${{ vars.NHOST_SUBDOMAIN || 'xbnokoslfakjqteiyvbu' }}
+  NHOST_REGION: ${{ vars.NHOST_REGION || 'sa-east-1' }}
+jobs:
+  verify:
+    name: Testar e compilar CONQUEST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - run: node --check src/main.js && node --check src/ui/account-panel.js
+      - run: node --check scripts/check-nhost-build.mjs && node --check scripts/check-pages-live.mjs
+  pages-build:
+    name: Compilar GitHub Pages com React + Nhost
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+        env:
+          GITHUB_PAGES: 'true'
+          VITE_NHOST_SUBDOMAIN: ${{ env.NHOST_SUBDOMAIN }}
+          VITE_NHOST_REGION: ${{ env.NHOST_REGION }}
+      - run: node scripts/check-nhost-build.mjs
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+  pages-deploy:
+    name: Publicar Entregável 6 no GitHub Pages
+    needs: pages-build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: node scripts/wait-legacy-pages.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/deploy-pages@v4
+        id: deployment
+  live-check:
+    name: Conferir site público da entrega
+    needs: pages-deploy
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/check-pages-live.mjs
+        env:
+          CONQUEST_PAGES_URL: https://ruan-levi.github.io/Entregavel6-Ambientes/
+  smoke-nhost:
+    name: Conferir Function Nhost
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/smoke-cloud.mjs

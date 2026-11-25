@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CONQUEST · instalar dependências",
+      "type": "shell",
+      "command": "npm ci",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CONQUEST · iniciar Vite",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CONQUEST · executar testes unitários",
+      "type": "shell",
+      "command": "npm test",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "CONQUEST · compilar para produção",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CONQUEST · Selenium (Python)",
+      "type": "shell",
+      "command": "python -m unittest discover -s e2e/tests -p 'test_*.py' -v",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

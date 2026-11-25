@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#07161d"/>
+  <meta name="description" content="Conquest: uma aventura 3D sobre Teoria dos Conjuntos, guardiões, cristais e batalhas matemáticas."/>
+  <title>Entregável 6 · Conquest | Full Stack</title>
+</head>
+<body>
+<div id="app">
+  <canvas id="renderCanvas" aria-label="Cenário tridimensional do jogo Conquest"></canvas>
+  <div id="top-shade"></div>
+  <header class="game-header">
+    <div class="brand"><span class="brand-icon">✦</span><div><b>CONQUEST</b><small>VALE DOS CONJUNTOS</small></div></div>
+    <div class="header-actions">
+      <span id="cloud-status" class="cloud-chip">● Modo local</span>
+      <button class="icon-button" id="audio-button" title="Ligar ou desligar efeitos de som" aria-label="Alternar som">♫</button>
+      <button class="icon-button" id="pause-button" title="Pausar" aria-label="Pausar">Ⅱ</button>
+    </div>
+  </header>
+  <aside id="hud-left" class="hud-left hidden">
+    <div class="hud-stat"><div class="stat-head"><span>❤ VIDA</span><b id="health-text">100 / 100</b></div><div class="bar"><div id="health-fill" class="bar-fill health-fill"></div></div></div>
+    <div class="hud-stat"><div class="stat-head"><span>✦ EXPERIÊNCIA</span><b id="score-text">0 pts</b></div><div class="bar"><div id="score-fill" class="bar-fill score-fill"></div></div></div>
+    <div class="stats-row"><div>✧ <b id="crystal-text">0/3</b><small>Cristais</small></div><div>⚔ <b id="guardian-text">0/3</b><small>Guardiões</small></div><div>✓ <b id="correct-text">0</b><small>Acertos</small></div></div>
+  </aside>
+  <aside id="objective-panel" class="objective-panel hidden" aria-live="polite">
+    <small class="eyebrow">✧ SUA MISSÃO ATUAL</small>
+    <h2 id="objective-title">Converse com Liora</h2>
+    <p id="objective-desc">Encontre a anciã na vila.</p>
+    <div class="objective-bottom"><span id="objective-distance">0 metros</span><span id="objective-stage">ETAPA 1 / 4</span></div>
+    <div id="direction-arrow" class="direction-arrow" aria-hidden="true">➤</div>
+  </aside>
+  <div id="interaction-prompt" class="interaction-prompt hidden"><kbd>E</kbd><span id="interaction-text">Interagir</span></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <div class="controls-hint hidden" id="controls-hint"><kbd>W A S D</kbd> Mover <kbd>SHIFT</kbd> Correr <kbd>E</kbd> Interagir <kbd>Q / R</kbd> Girar câmera</div>
+  <div id="mobile-controls" class="mobile-controls hidden">
+    <div class="dpad">
+      <button data-control="w" class="up" aria-label="Andar para frente">▲</button>
+      <button data-control="a" class="left" aria-label="Andar para esquerda">◀</button>
+      <button data-control="s" class="down" aria-label="Andar para trás">▼</button>
+      <button data-control="d" class="right" aria-label="Andar para direita">▶</button>
+    </div>
+    <div class="touch-actions">
+      <button data-control="shift" class="sprint">CORRER</button>
+      <button data-control="e" class="interact">AÇÃO</button>
+    </div>
+  </div>
+
+  <div id="intro-overlay" class="screen-overlay portal-page">
+    <div class="intro-backdrop"><div class="glow one"></div><div class="glow two"></div></div>
+    <div class="portal-shell">
+      <nav class="portal-navigation" aria-label="Navegação da página inicial">
+        <div class="portal-logo"><span>✦</span><div><strong>CONQUEST</strong><small>A JORNADA DOS CONJUNTOS</small></div></div>
+        <div class="portal-nav-actions">
+          <span id="portal-account-status" class="portal-account-status">Explorador visitante</span>
+          <button id="portal-account-open" type="button" class="portal-ghost-button">Entrar / Cadastrar</button>
+        </div>
+      </nav>
+      <main class="portal-grid">
+        <section class="intro-content" aria-labelledby="portal-title">
+          <div class="intro-kicker">✧ AVENTURA EDUCATIVA EM UM MUNDO 3D</div>
+          <h1 id="portal-title">CON<span>QUEST</span></h1>
+          <p class="portal-lead">O conhecimento transforma o destino do Vale.</p>
+          <p>Explore uma vila medieval, reúna cristais mágicos e enfrente os guardiões da <strong>Teoria dos Conjuntos</strong>. Cada resposta correta é um novo passo na jornada.</p>
+          <div class="intro-features"><span>⚔ Batalhas matemáticas</span><span>◇ Mundo 3D explorável</span><span>✦ Missões e cristais</span></div>
+          <div class="portal-cta-row">
+            <button id="start-button" class="primary-button">INICIAR AVENTURA <span>➜</span></button>
+            <button id="portal-cloud-open" type="button" class="portal-ghost-button">☁ Minha conta</button>
+            <button id="e6-react-open" type="button" class="portal-ghost-button">Painel React · Nhost</button>
+            <a href="%BASE_URL%ambientes/" class="portal-ghost-button" title="Demonstração dos seis ambientes da disciplina">↗ VER OS 6 AMBIENTES</a>
+          </div>
+          <p class="portal-guest-note">Você pode jogar sem conta. Se o Nhost estiver configurado, entre para salvar e consultar seu histórico de partidas.</p>
+          <div class="portal-journey"><span><b>01</b> Conheça Liora</span><span><b>02</b> Reúna 3 cristais</span><span><b>03</b> Enfrente os guardiões</span><span><b>04</b> Desafie Cael</span></div>
+          <div class="intro-help">WASD para mover · Shift para correr · E para interagir · Q/R para câmera</div>
+        </section>
+        <aside class="portal-sidebar" aria-label="Ranking e modos de jogo">
+          <section class="portal-card" aria-labelledby="portal-ranking-title">
+            <div class="portal-card-heading">
+              <div><small class="eyebrow">COMPETIÇÃO ONLINE</small><h2 id="portal-ranking-title">🏆 Ranking global</h2></div>
+              <button id="portal-ranking-refresh" class="portal-small-button" type="button" aria-label="Atualizar ranking">↻</button>
+            </div>
+            <ol id="portal-ranking-list" class="portal-ranking-list" aria-live="polite"><li>Carregando ranking global verificado…</li></ol>
+            <p id="portal-ranking-status" class="portal-status">Apenas partidas online concluídas pelos dois participantes entram na classificação.</p>
+          </section>
+          <section class="portal-card portal-modes" aria-labelledby="portal-modes-title">
+            <small class="eyebrow">ESCOLHA COMO JOGAR</small>
+            <h2 id="portal-modes-title">Modos de aventura</h2>
+            <div class="portal-mode"><span class="portal-mode-symbol">⚔</span><div><strong>Jornada 3D</strong><small>Explore o Vale, resolva desafios e enfrente Cael.</small></div><span class="portal-mode-tag">Disponível</span></div>
+            <div class="portal-mode"><span class="portal-mode-symbol">✦</span><div><strong>Duelo online</strong><small>Convide um amigo por código e disputem seis perguntas corrigidas no Nhost.</small></div><button id="portal-duel-open" type="button" class="portal-mode-link">JOGAR</button></div>
+            <p class="portal-status">É necessário entrar em uma conta Nhost para participar. A jornada 3D continua disponível sem login.</p>
+          </section>
+        </aside>
+      </main>
+      <footer class="portal-footer"><span>ENTREGÁVEL 6 · FULL STACK · UNIFOR</span><span>Vite + Babylon.js + Nhost</span></footer>
+    </div>
+  </div>
+
+  <div id="dialogue-overlay" class="screen-overlay hidden">
+    <div class="dialog-card panel">
+      <div class="npc-emblem">✦</div><div class="eyebrow">A ANCIÃ DO VALE</div><h2>Liora</h2>
+      <p>“Os cristais do conhecimento estão espalhados pelo vale. Reúna os três para despertar os Guardiões. Só então você poderá enfrentar Cael e restaurar o equilíbrio dos conjuntos!”</p>
+      <button id="dialogue-continue" class="primary-button">ACEITAR MISSÃO ➜</button>
+    </div>
+  </div>
+  <div id="battle-overlay" class="screen-overlay hidden">
+    <div class="battle-card panel">
+      <div class="battle-header"><div><div class="eyebrow" id="battle-tag">GUARDIÃO</div><h2 id="battle-name">Guardião da União</h2></div><button id="battle-close" class="icon-button" title="Recuar da batalha">×</button></div>
+      <div class="battle-health"><span>ENERGIA DO GUARDIÃO</span><b id="enemy-health-label">2 / 2</b></div>
+      <div class="bar enemy-bar"><div id="enemy-health-fill" class="bar-fill"></div></div>
+      <div class="question-label">DESAFIO DE TEORIA DOS CONJUNTOS</div>
+      <h3 id="battle-question"></h3>
+      <div id="answer-grid" class="answer-grid"></div>
+      <div id="battle-feedback" class="battle-feedback" aria-live="polite">Escolha uma resposta para atacar.</div>
+    </div>
+  </div>
+  <div id="end-overlay" class="screen-overlay hidden">
+    <div class="end-card panel"><div class="end-symbol" id="end-symbol">✦</div><small class="eyebrow" id="end-kicker">JORNADA CONCLUÍDA</small><h2 id="end-title">O Vale foi salvo!</h2>
+      <p id="end-description">Seu conhecimento restaurou o equilíbrio.</p>
+      <div class="end-stat-row"><div><b id="end-score">0</b><span>PONTOS</span></div><div><b id="end-correct">0</b><span>ACERTOS</span></div></div>
+      <div id="cloud-save-message" class="cloud-save-message"></div>
+      <button id="end-restart" class="primary-button">JOGAR NOVAMENTE ➜</button>
+      <button id="end-home" class="secondary-button">VOLTAR AO PORTAL</button>
+    </div>
+  </div>
+  <div id="pause-overlay" class="screen-overlay hidden">
+    <div class="pause-card panel"><div class="eyebrow">JOGO PAUSADO</div><h2>Seu caminho espera.</h2>
+      <p>Continue quando estiver preparado para explorar o Vale dos Conjuntos.</p>
+      <button id="resume-button" class="primary-button">CONTINUAR ➜</button>
+      <button id="restart-button" class="secondary-button">REINICIAR AVENTURA</button>
+      <button id="pause-home" class="secondary-button">VOLTAR AO PORTAL</button>
+    </div>
+  </div>
+  <div class="cloud-modal hidden" id="cloud-modal"><div class="cloud-modal-inner panel">
+    <button class="icon-button close-cloud" id="close-cloud">×</button>
+    <small class="eyebrow">CONEXÃO COM A NUVEM</small>
+    <h2>Conta e partidas</h2><p id="cloud-description">Conecte seu projeto Nhost para registrar o progresso.</p>
+    <p id="cloud-project" class="cloud-project" aria-live="polite"></p>
+    <form id="cloud-login-form"><input id="cloud-email" type="email" placeholder="Seu e-mail" autocomplete="email" required/><input id="cloud-password" type="password" placeholder="Sua senha" autocomplete="current-password" required minlength="8"/>
+      <div class="cloud-actions"><button class="primary-button" type="submit" data-action="login">ENTRAR</button><button type="button" class="secondary-button" id="cloud-register">CRIAR CONTA</button></div>
+    </form>
+    <div id="cloud-user" class="hidden"><p id="cloud-user-name"></p><button id="cloud-logout" class="secondary-button">SAIR DA CONTA</button></div>
+    <section id="cloud-dashboard" class="cloud-dashboard hidden" aria-live="polite">
+      <h3>Minhas partidas no Nhost</h3>
+      <p id="cloud-realtime-status">Sincronizacao nao iniciada.</p>
+      <ol id="cloud-score-list"><li>Carregando partidas...</li></ol>
+      <button id="cloud-refresh-scores" class="secondary-button" type="button">ATUALIZAR DADOS</button>
+      <h3>Storage: comprovante da aventura</h3>
+      <label for="cloud-proof">Enviar imagem privada (PNG, JPEG ou WebP, ate 2 MB)</label>
+      <input type="file" id="cloud-proof" accept="image/png,image/jpeg,image/webp"/>
+      <button id="cloud-upload-proof" class="secondary-button" type="button">ENVIAR AO NHOST</button>
+      <p id="cloud-storage-status" role="status"></p>
+    </section>
+    <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
+  </div></div>
+  <div class="duel-modal hidden" id="duel-modal" role="dialog" aria-modal="true" aria-labelledby="duel-title">
+    <div class="duel-card panel">
+      <button id="duel-close" type="button" class="icon-button duel-close" aria-label="Fechar duelo">×</button>
+      <small class="eyebrow">ARENA DOS CONJUNTOS · NHOST</small>
+      <h2 id="duel-title">Competição online</h2>
+      <p id="duel-message" class="duel-message" role="status">Crie uma sala ou entre com um código de convite.</p>
+      <div id="duel-setup">
+        <label for="duel-nickname">Apelido público no ranking</label>
+        <input id="duel-nickname" maxlength="24" minlength="3" value="Aventureiro" autocomplete="nickname"/>
+        <button id="duel-create" type="button" class="primary-button duel-wide">CRIAR SALA E CONVIDAR</button>
+        <div class="duel-divider">OU ENTRE NA SALA DE UM AMIGO</div>
+        <label for="duel-code-input">Código de convite (8 caracteres)</label>
+        <input id="duel-code-input" maxlength="8" placeholder="EX: A7BK42DC" autocapitalize="characters"/>
+        <button id="duel-join" type="button" class="secondary-button duel-wide">ENTRAR NO DUELO</button>
+      </div>
+      <div id="duel-play" class="hidden">
+        <p class="duel-invite">CÓDIGO PARA CONVIDAR: <b id="duel-room-code">--------</b></p>
+        <div class="duel-scoreboard">
+          <div><small>JOGADOR 1</small><strong id="duel-host-name">Aventureiro</strong><b id="duel-host-score">0</b><span id="duel-host-round">0/6</span></div>
+          <div class="duel-versus">VS</div>
+          <div><small>JOGADOR 2</small><strong id="duel-guest-name">Aguardando</strong><b id="duel-guest-score">0</b><span id="duel-guest-round">0/6</span></div>
+        </div>
+        <small id="duel-round-label" class="eyebrow">AGUARDANDO O SEGUNDO JOGADOR</small>
+        <h3 id="duel-question">Aguardando…</h3>
+        <div id="duel-answers" class="answer-grid"></div>
+        <p id="duel-connection" class="portal-status">Conectando ao tempo real…</p>
+        <div class="duel-actions"><button id="duel-refresh" type="button" class="secondary-button">ATUALIZAR</button><button id="duel-cancel" type="button" class="secondary-button">ENCERRAR PARTIDA</button><button id="duel-back" type="button" class="secondary-button">OUTRA SALA</button></div>
+      </div>
+    </div>
+  </div>
+  <button id="cloud-open" class="cloud-open" aria-label="Abrir conexão Nhost" title="Nhost: conta e ranking">☁ Conta / Ranking</button>
+</div>
+<div id="entregavel6-react-root"></div>
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07171f">
+  <meta name="description" content="CONQUEST Entregável 6: jogo educativo full stack e demonstração de seis ambientes de desenvolvimento.">
+  <title>CONQUEST · Entregável 6 — Full Stack</title>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eaf9f7;background:#07171f;scroll-behavior:smooth}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+    a:focus-visible,button:focus-visible{outline:3px solid #66e9cf;outline-offset:4px}
+    .site-header{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:27px 24px;border-bottom:1px solid #24434c}
+    .logo{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;letter-spacing:.08em}.logo-mark{display:grid;place-items:center;width:43px;height:43px;color:#d8fff7;background:#176b69;border:1px solid #4cc0b3;border-radius:13px}
+    .label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#81d7c9;font-weight:750}
+    .header-right{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.tiny-link{font-size:13px;color:#b5d4cf;padding:9px 13px;border:1px solid #2b5358;border-radius:10px}
+    main{max-width:1200px;margin:auto;padding:44px 24px 80px}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:stretch}
+    .hero-copy{position:relative;overflow:hidden;background:linear-gradient(132deg,#10333a,#0a232d 64%,#0e3941);border:1px solid #305d63;border-radius:26px;padding:50px 49px 55px;min-height:430px}
+    .hero-copy::after{content:"✦";position:absolute;right:40px;top:48px;font-size:270px;line-height:1;color:#62e1cb;opacity:.09;pointer-events:none}
+    h1{font-size:clamp(42px,5.5vw,72px);letter-spacing:-.045em;line-height:1.05;margin:25px 0 18px}h1 span{color:#73ddc9}
+    .lead{max-width:580px;color:#b5d9d4;font-size:18px;line-height:1.65}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #458a86;background:#197d79;color:#fff;padding:15px 21px;border-radius:11px;font-weight:750}
+    .btn.secondary{background:#163b44;color:#bfe7e0}.btn:hover,.tiny-link:hover{filter:brightness(1.15)}.status{padding:24px;border:1px solid #315960;border-radius:26px;background:linear-gradient(160deg,#12313a,#0b252f)}
+    .status h2{margin:14px 0;font-size:24px}.status p{font-size:14px;color:#aaccca;line-height:1.7}.architecture{display:grid;grid-template-columns:1fr;gap:10px;margin-top:23px}
+    .stack{border:1px solid #315c60;background:#14343c;border-radius:13px;padding:15px}.stack strong{font-size:16px}.stack span{display:block;color:#a6cbc7;margin-top:4px;font-size:13px}
+    .stack-arrow{text-align:center;color:#6ee0d1;font-size:20px;line-height:1}
+    .section-head{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-top:61px;margin-bottom:23px}.section-head h2{font-size:29px;margin:8px 0 0}
+    .section-head p{margin:0;color:#95bcb9;font-size:14px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .card{padding:24px;border-radius:20px;background:#102b34;border:1px solid #2b525b;min-height:247px;display:flex;flex-direction:column;align-items:flex-start}
+    .card .ordinal{font-size:12px;letter-spacing:.12em;color:#69d8c6;font-weight:850}.card h3{font-size:20px;margin:16px 0 9px}.card p{font-size:14px;color:#aacbca;line-height:1.6;margin:0 0 21px}
+    .card a{margin-top:auto;font-size:14px;color:#81ead7;font-weight:800;border-bottom:1px solid #4f9b91;padding-bottom:4px}
+    .live{display:grid;grid-template-columns:1fr 1fr;gap:20px}.live-panel{padding:26px;background:#102b34;border-radius:20px;border:1px solid #2b525b}
+    .live-panel h3{margin:0 0 14px}.live-panel p{font-size:14px;line-height:1.5;color:#abcfc8}.live-panel button{margin:8px 0 6px}.live-list{margin:15px 0;padding-left:20px;line-height:1.9;color:#d6efe9}
+    .footer{max-width:1200px;margin:auto;border-top:1px solid #24434c;padding:25px 24px 40px;color:#90b7b4;font-size:13px}
+    .footer a{text-decoration:underline}.hint{font-size:13px;line-height:1.5;color:#a3c3c0;margin-top:10px}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.live{grid-template-columns:1fr}}
+    @media(max-width:640px){.site-header{align-items:flex-start;flex-direction:column}.hero-copy{padding:37px 25px;min-height:350px}.section-head{flex-direction:column;align-items:start}.cards{grid-template-columns:1fr}.status{padding:23px}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="../" aria-label="Voltar ao CONQUEST"><span class="logo-mark">✦</span><span>CONQUEST</span></a>
+  <div class="header-right">
+    <span class="label">Ambientes de Desenvolvimento · AV3</span>
+    <a class="tiny-link" href="https://github.com/Ruan-levi/Entregavel6-Ambientes">Ver código-fonte</a>
+  </div>
+</header>
+<main>
+  <div class="hero">
+    <section class="hero-copy">
+      <div class="label">ENTREGÁVEL 6 · APLICAÇÃO FULL STACK</div>
+      <h1>Uma aventura.<br><span>Seis ambientes.</span></h1>
+      <p class="lead">CONQUEST é um jogo educativo 3D que une frontend em JavaScript, React e Babylon.js, autenticação em nuvem, API REST, PostgreSQL e testes automatizados. Aqui estão as ferramentas utilizadas no desenvolvimento e as evidências da atividade.</p>
+      <div class="actions">
+        <a class="btn" href="../" id="play-conquest">JOGAR CONQUEST ↗</a>
+        <a class="btn secondary" href="https://github.com/Ruan-levi/Entregavel6-Ambientes/blob/main/docs/ENTREGAVEL6.md">Ver documentação</a>
+      </div>
+    </section>
+    <aside class="status" aria-label="Arquitetura da aplicação">
+      <div class="label">Arquitetura da aplicação</div><h2>Frontend + Backend + Banco</h2>
+      <p>A interface e o motor 3D são servidos pelo GitHub Pages. O Nhost hospeda os serviços de autenticação, Functions Node.js e o PostgreSQL.</p>
+      <div class="architecture">
+        <div class="stack"><strong>Frontend</strong><span>GitHub Pages · Vite · React · Babylon.js</span></div>
+        <div class="stack-arrow" aria-hidden="true">↓</div>
+        <div class="stack"><strong>Backend</strong><span>Nhost Auth · Functions REST · GraphQL</span></div>
+        <div class="stack-arrow" aria-hidden="true">↓</div>
+        <div class="stack"><strong>Banco persistente</strong><span>PostgreSQL · tabelas de partidas e ranking</span></div>
+      </div>
+    </aside>
+  </div>
+  <section aria-labelledby="environments-title">
+    <div class="section-head"><div><div class="label">Roteiro de ferramentas</div><h2 id="environments-title">Os seis ambientes da atividade</h2></div><p>Arquivos e serviços reais utilizados na entrega.</p></div>
+    <div class="cards">
+      <article class="card"><div class="ordinal">01 · GESTÃO</div><h3>GitHub Issues</h3><p>Planejamento do trabalho, divisão de tarefas, progresso e evidências da equipe.</p><a href="https://github.com/Ruan-levi/Entregavel6-Ambientes/issues">Abrir quadro de tarefas ↗</a></article>
+      <article class="card"><div class="ordinal">02 · UI / UX</div><h3>Figma</h3><p>Protótipos editáveis do portal, do painel de autenticação e do fluxo full stack.</p><a href="https://www.figma.com/design/Gir9pqcDf92GYOmacmwmfO">Abrir protótipo ↗</a></article>
+      <article class="card"><div class="ordinal">03 · DESENVOLVIMENTO</div><h3>Visual Studio Code</h3><p>Configurações de projeto, comandos npm e código do frontend e das Functions Node.js.</p><a href="https://github.com/Ruan-levi/Entregavel6-Ambientes/tree/main/.vscode">Ver workspace VS Code ↗</a></article>
+      <article class="card"><div class="ordinal">04 · BANCO DE DADOS</div><h3>Nhost + PostgreSQL</h3><p>Gerenciamento via Hasura, migrations SQL, autenticação e consultas GraphQL.</p><a href="https://app.nhost.io/">Abrir painel Nhost ↗</a></article>
+      <article class="card"><div class="ordinal">05 · TESTES</div><h3>Selenium WebDriver</h3><p>Automatização em navegador Chromium, mais testes Vitest e Node.js na integração contínua.</p><a href="https://github.com/Ruan-levi/Entregavel6-Ambientes/actions">Ver execuções de testes ↗</a></article>
+      <article class="card"><div class="ordinal">06 · SERVIDORES</div><h3>GitHub Pages + Nhost</h3><p>Frontend público em HTTPS; API de duelos e banco executados separadamente na nuvem.</p><a href="../">Abrir aplicação publicada ↗</a></article>
+    </div>
+  </section>
+  <section aria-labelledby="live-title">
+    <div class="section-head"><div><div class="label">Demonstração em tempo real</div><h2 id="live-title">Consulta real à API Nhost</h2></div><p>Sem login e sem expor informações privadas.</p></div>
+    <div class="live">
+      <div class="live-panel">
+        <h3>Backend REST · Function `duel`</h3>
+        <p>Aperte o botão para executar um GET público na Function do Nhost e exibir a quantidade de jogadores classificados.</p>
+        <button class="btn" id="check-api" type="button">Consultar API agora</button>
+        <p id="api-result" role="status" aria-live="polite">Consulta ainda não executada.</p>
+        <div class="hint">Endpoint: https://xbnokoslfakjqteiyvbu.functions.sa-east-1.nhost.run/v1/duel</div>
+      </div>
+      <div class="live-panel">
+        <h3>Ranking público verificado</h3>
+        <p>Os resultados exibidos aqui vêm do backend, não são dados fixos do HTML.</p>
+        <ol id="ranking-results" class="live-list" aria-live="polite"><li>Clique em “Consultar API agora”.</li></ol>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer">CONQUEST · UNIFOR · Entregável 6. <a href="https://github.com/Ruan-levi/Entregavel6-Ambientes/blob/main/docs/ROTEIRO_APRESENTACAO_E6.md">Roteiro de apresentação</a> · <a href="../">Jogar</a>. Base 3D da Entregável 5 reutilizada em projeto independente da Entregável 6.</footer>
+<script>
+  const endpoint='https://xbnokoslfakjqteiyvbu.functions.sa-east-1.nhost.run/v1/duel';
+  const button=document.getElementById('check-api');
+  const result=document.getElementById('api-result');
+  const list=document.getElementById('ranking-results');
+  button.addEventListener('click',async()=>{
+    button.disabled=true;result.textContent='Consultando o backend Nhost…';
+    try {
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),12000);
+      let response;
+      try{response=await fetch(endpoint,{headers:{Accept:'application/json'},signal:controller.signal});}
+      finally{clearTimeout(timer);}
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const body=await response.json();
+      if(!Array.isArray(body.ranking))throw new Error('Formato inesperado no ranking');
+      result.textContent='API online · HTTP '+response.status+' · '+body.ranking.length+' jogador(es) classificado(s)';
+      list.replaceChildren();
+      if(!body.ranking.length){
+        const item=document.createElement('li');item.textContent='Nenhuma partida classificada ainda.';list.append(item);
+      }
+      for(const player of body.ranking.slice(0,10)){
+        const item=document.createElement('li');
+        item.textContent=String(player.nickname||'Aventureiro').slice(0,30)+' — '+Number(player.bestScore||0)+' pontos';
+        list.append(item);
+      }
+    }catch(error){
+      result.textContent='Não foi possível consultar a API: '+(error.name==='AbortError'?'tempo esgotado':error.message);
+      list.replaceChildren();const item=document.createElement('li');item.textContent='Confirme a publicação da Function no Nhost.';list.append(item);
+    }finally{button.disabled=false;}
+  });
+</script>
+</body>
+</html>
