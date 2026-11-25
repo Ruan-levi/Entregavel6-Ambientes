@@ -95,6 +95,10 @@ python -m unittest discover -s e2e/tests -p 'test_*.py' -v
 
 O site público deve ser verificado após cada publicação em [GitHub Actions](https://github.com/Ruan-levi/Entregavel6-Ambientes/actions). Se o Pages ainda não estiver ativo, configure [Settings → Pages](https://github.com/Ruan-levi/Entregavel6-Ambientes/settings/pages) para usar **GitHub Actions**.
 
+### Ativação inicial do GitHub Pages
+
+O GitHub Pages precisa ser ativado uma vez por um administrador em [Settings → Pages](https://github.com/Ruan-levi/Entregavel6-Ambientes/settings/pages) usando **Source: GitHub Actions**. A publicação não pode ser considerada concluída apenas porque o código foi integrado à `main`; confirme os jobs de deploy e verificação. Após a configuração, reexecute o workflow de publicação em GitHub Actions.
+
 ## 6. Limites importantes
 
 - A Function de duelo dispõe de `GET` para ranking e `POST` para ações distintas. Isso **não equivale automaticamente a CRUD REST com quatro rotas**.
